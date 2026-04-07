@@ -11,13 +11,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RequisicaoRepository extends JpaRepository<RequisicaoEntity, Integer> {
 
+    // Exemplo de busca customizada: Todas as requisições de um departamento
+    // List<RequisicaoEntity> findByDepartamentoId(Integer deptoId);
+
+    // Aqui chamaremos sua procedure de baixar estoque no futuro
     @Modifying(clearAutomatically = true) // <--- Isso força o Spring a atualizar as entidades
     @Transactional
-    // Procedure que você já tinha para finalizar (dar baixa)
-    @Procedure(procedureName = "pc_FinalizarEntrega")
-    void finalizarEntrega(
-        @Param("idRequisicao") Integer idRequisicao,
-        @Param("idFuncionario") Integer idFuncionario,
-        @Param("novoStatus") Integer novoStatus
+    @Procedure(name = "STP_FinalizarRequisicao")
+    void finalizarRequisicao(
+        @Param("idRequisicao") Integer idReq, 
+        @Param("idFuncionario") Integer idFunc
     );
 }

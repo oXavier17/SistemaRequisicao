@@ -4,17 +4,15 @@ import jakarta.persistence.*;
 import lombok.Data; // O Lombok faz o trabalho sujo
 
 @Entity
-@Table(name = "Departamento")
+@Table(name = "Categoria")
 @Data
-public class DepartamentoEntity {
+public class CategoriaEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idDepartamento") // Mapeia exatamente o nome da coluna no SQL
-    private Integer idDepartamento;
+    @Column(name = "idCategoria") // Mapeia exatamente o nome da coluna no SQL
+    private Integer idCategoria;
     
     @Column(name = "nome") // Mapeia a coluna 'nome' do banco
     private String nome;
-    
-    private Integer status = 1;
 }

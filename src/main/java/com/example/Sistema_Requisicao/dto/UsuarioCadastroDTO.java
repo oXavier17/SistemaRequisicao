@@ -7,13 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioDTO {
-    private Integer idUsuario;
+public class UsuarioCadastroDTO {
     private String nome;
     private String email;
     private String cpf;
+    private String senha;           // só no cadastro
     private Integer tipoPerfil;
     private Integer departamentoId;
-    private String departamentoNome;
-    private Boolean status;
 }

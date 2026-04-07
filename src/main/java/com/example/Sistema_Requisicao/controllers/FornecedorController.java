@@ -11,24 +11,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/departamentos")
+@RequestMapping("/api/fornecedores")
 @CrossOrigin(origins = "*")
-public class DepartamentoController {
+public class FornecedorController {
 
     @Autowired
-    private DepartamentoService service;
+    private FornecedorService service;
 
     @GetMapping
-    public ResponseEntity<List<DepartamentoDTO>> listar() {
+    public ResponseEntity<List<FornecedorDTO>> listar() {
         return ResponseEntity.ok(service.listarTodos());
     }
 
     @PostMapping
-    public ResponseEntity<?> salvar(@RequestBody DepartamentoDTO dto) {
+    public ResponseEntity<?> salvar(@RequestBody FornecedorDTO dto) {
         try {
             service.salvar(dto);
             return ResponseEntity.status(HttpStatus.CREATED).build();

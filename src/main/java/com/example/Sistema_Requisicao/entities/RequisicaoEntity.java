@@ -1,46 +1,50 @@
 package com.example.Sistema_Requisicao.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "Requisicao")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RequisicaoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idRequisicao")
-    private Integer id;
-
-    // Quem solicitou (Pode ser um Requisitante ou Funcionario)
-    @ManyToOne
-    @JoinColumn(name = "requisitanteId")
-    private UsuarioEntity solicitante;
-
-    // Quem entregou (Pode ser nulo enquanto estiver pendente)
-    @ManyToOne
-    @JoinColumn(name = "funcionarioId")
-    private UsuarioEntity atendidoPor;
+    private Integer idRequisicao;
 
     private LocalDateTime dataRequisicao = LocalDateTime.now();
-    
-    @Column(name = "dataEntrega")
-    private LocalDateTime dataEntrega;
-    
-    // Status: 1-Pendente, 2-Finalizada, 0-Cancelada
-    private Integer status;
 
-    // Relacionamento Um-para-Muitos: Uma requisição tem vários itens
-    // O 'mappedBy' aponta para o nome do campo dentro da classe ItemRequisicaoEntity
-    @OneToMany(mappedBy = "requisicao", fetch = FetchType.EAGER) // EAGER força o carregamento dos itens
-    @JsonManagedReference
+    private LocalDateTime dataEnvio;
+
+    @Column(nullable = false)
+    private Integer status; // 1-Aberta, 2-Separação, 3-Pronta, 4-Entregue, 5-Cancelada
+
+    @Column(length = 300)
+    private String observacao;
+
+    // QUEM PEDIU (Sempre um Usuario com tipo_perfil = 3)
+    @ManyToOne
+    @JoinColumn(name = "requisitanteId", nullable = false)
+    private UsuarioEntity requisitante;
+
+    // QUEM ATENDEU (Um Usuario com tipo_perfil = 2, pode ser null enquanto estiver aberta)
+    @ManyToOne
+    @JoinColumn(name = "funcionarioId", nullable = true)
+    private UsuarioEntity funcionario;
+
+    // DEPARTAMENTO DE DESTINO
+    @ManyToOne
+    @JoinColumn(name = "departamentoId", nullable = true)
+    private DepartamentoEntity departamento;
+
+    // RELACIONAMENTO COM OS ITENS (Opcional, mas ajuda muito no GET do Front-end)
+    @OneToMany(mappedBy = "requisicao", cascade = CascadeType.ALL)
     private List<ItemRequisicaoEntity> itens;
-
-    @Transient
-    private String statusDescricao;
 }

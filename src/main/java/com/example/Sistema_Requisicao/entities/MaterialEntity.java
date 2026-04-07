@@ -6,28 +6,34 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Materiais") // Nome exato da tabela no SQL Server
-@Data // Faz os Getters/Setters e toString
-@NoArgsConstructor // Faz o construtor vazio (o Spring exige este)
-@AllArgsConstructor // Faz o construtor com todos os campos (substitui o seu manual)
+@Table(name = "Material")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class MaterialEntity {
 
-    @Id // Define que é chave primária
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Identity do SQL Server
-    @Column(name = "idMaterial") // Nome exato da coluna no seu CREATE TABLE
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idMaterial")
+    private Integer idMaterial;
 
     @Column(nullable = false, length = 50)
     private String nome;
 
-    private Integer estoqueAtual;
-    private Integer estoqueMin;
+    @Column(nullable = false)
+    private Integer estoqueAtual = 0; // Bom colocar o default aqui também
 
-    @Column(length = 10)
-    private String unidadeMedida;
-    
-    // O tipo 'money' do SQL mapeia bem para Double ou BigDecimal
-    private Double preco; 
+    @Column(nullable = false)
+    private Integer estoqueMin = 0;
 
-    private Integer status;
+    @Column(nullable = false)
+    private Integer status = 1;
+
+    // A MÁGICA ACONTECE AQUI:
+    @ManyToOne // Muitos materiais para uma categoria
+    @JoinColumn(name = "categoriaId", nullable = false) // Nome da FK no banco
+    private CategoriaEntity categoria; 
+
+    @Column(nullable = false, length = 50)
+    private String unidade;
 }

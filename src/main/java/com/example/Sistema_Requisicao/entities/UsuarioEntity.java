@@ -1,35 +1,52 @@
 package com.example.Sistema_Requisicao.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Usuario")
-@Inheritance(strategy = InheritanceType.JOINED) // ESSENCIAL: Diz que a herança está dividida em tabelas
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UsuarioEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idUsuario")
-    private Integer id;
+    private Integer idUsuario;
 
+    @Column(nullable = false, length = 200)
     private String nome;
+
+    @Column(nullable = false, unique = true, length = 14)
     private String cpf;
+
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
+
+    @Column(nullable = false, length = 64)
     private String senha;
 
-    @Column(name = "tipo_perfil")
-    private Integer tipoPerfil;
+    @Column(name = "tipo_perfil", nullable = false)
+    private Integer tipoPerfil; // 1-ADM, 2-FUNC, 3-REQ
 
-    private Boolean status;
+    private Boolean status = true;
 
-    // Campos auxiliares (Transient)
-    // O @Transient diz ao Spring para NÃO procurar essa coluna no banco de dados.
-    // Usamos isso para guardar as descrições daquelas suas VIEWS.
-    @Transient
-    private String perfilDescricao;
-    
-    @Transient
-    private String statusDescricao;
+    // Relacionamento com Departamento
+    // Como ADMs podem não ter departamento, deixamos nullable = true
+    @ManyToOne
+    @JoinColumn(name = "idDepartamento", nullable = true) 
+    private DepartamentoEntity departamento;
+
+    // Dica: Método auxiliar para o Front-end saber o nome do perfil
+    public String getRoleName() {
+        return switch (this.tipoPerfil) {
+            case 1 -> "ADMIN";
+            case 2 -> "FUNCIONARIO";
+            case 3 -> "REQUISITANTE";
+            default -> "DESCONHECIDO";
+        };
+    }
 }

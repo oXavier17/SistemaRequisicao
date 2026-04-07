@@ -1,6 +1,5 @@
 package com.example.Sistema_Requisicao.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore; // Importação correta
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -8,20 +7,17 @@ import lombok.Data;
 @Table(name = "ItemRequisicao")
 @Data
 public class ItemRequisicaoEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idItem") // Mapeando o nome físico da coluna
     private Integer idItem;
 
     @ManyToOne
-    @JoinColumn(name = "requisicaoId")
-    @JsonIgnore // <--- O SEGREDO ESTÁ AQUI: Impede que o item tente mostrar a requisição dentro dele
-    private RequisicaoEntity requisicao;
+    @JoinColumn(name = "idRequisicao")
+    private RequisicaoEntity requisicao; // SEM @GeneratedValue aqui!
 
     @ManyToOne
-    @JoinColumn(name = "materialId")
-    private MaterialEntity material;
+    @JoinColumn(name = "idMaterial")
+    private MaterialEntity material; // SEM @GeneratedValue aqui!
 
     private Integer quantidade;
 }

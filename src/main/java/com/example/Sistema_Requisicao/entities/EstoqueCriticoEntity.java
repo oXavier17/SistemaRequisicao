@@ -18,10 +18,6 @@ public class EstoqueCriticoEntity {
     @Column(name = "materialId")
     private Integer materialId;
 
-    private String nomeMaterial;
-    private Integer estoqueAtual;
-    private Integer estoqueMin;
-
     private LocalDateTime dataGeracao = LocalDateTime.now();
 
     @Column(name = "statusAlerta") // Nome exato da coluna no SQL
