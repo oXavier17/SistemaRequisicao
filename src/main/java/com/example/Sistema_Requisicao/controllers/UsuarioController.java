@@ -21,7 +21,7 @@ public class UsuarioController {
     public ResponseEntity<List<UsuarioDTO>> listar() {
         return ResponseEntity.ok(service.listarTodos());
     }
-
+/* 
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody UsuarioDTO dto) {
         try {
@@ -30,5 +30,5 @@ public class UsuarioController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
+    }*/
 }
