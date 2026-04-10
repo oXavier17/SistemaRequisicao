@@ -10,25 +10,51 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/materiais")
-@CrossOrigin(origins = "*")
+@RequestMapping("/materiais")
+@CrossOrigin(origins = "*") // Permite que o React acesse a API
 public class MaterialController {
 
     @Autowired
     private MaterialService service;
 
     @GetMapping
-    public ResponseEntity<List<MaterialDTO>> listar() {
+    public ResponseEntity<List<MaterialDTO>> listarTodos() {
         return ResponseEntity.ok(service.listarTodos());
     }
 
-    @PostMapping
-    public ResponseEntity<?> salvar(@RequestBody MaterialDTO dto) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarPorId(@PathVariable Integer id) {
         try {
-            service.salvar(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return ResponseEntity.ok(service.buscarPorId(id));
         } catch (Exception e) {
-            // Se a categoria não existir ou o nome for duplicado, cai aqui
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> criar(@RequestBody MaterialDTO dto) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(dto));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editar(@PathVariable Integer id, @RequestBody MaterialDTO dto) {
+        try {
+            return ResponseEntity.ok(service.editar(id, dto));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> alterarStatus(@PathVariable Integer id) {
+        try {
+            service.alterarStatus(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "Requisicao")
 @Data
@@ -20,7 +22,6 @@ public class RequisicaoEntity {
     private Integer idRequisicao;
 
     private LocalDateTime dataRequisicao = LocalDateTime.now();
-
     private LocalDateTime dataEnvio;
 
     @Column(nullable = false)
@@ -46,5 +47,6 @@ public class RequisicaoEntity {
 
     // RELACIONAMENTO COM OS ITENS (Opcional, mas ajuda muito no GET do Front-end)
     @OneToMany(mappedBy = "requisicao", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ItemRequisicaoEntity> itens;
 }

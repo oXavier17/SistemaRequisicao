@@ -32,7 +32,7 @@ public class UsuarioEntity {
     @Column(name = "tipo_perfil", nullable = false)
     private Integer tipoPerfil; // 1-ADM, 2-FUNC, 3-REQ
 
-    private Boolean status = true;
+    private Integer status = 1;
 
     // Relacionamento com Departamento
     // Como ADMs podem não ter departamento, deixamos nullable = true

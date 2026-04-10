@@ -38,11 +38,14 @@ public class DepartamentoService {
         return convertToDTO(repository.save(entity));
     }
 
-    public void excluir(Integer id) throws Exception {
+    public void alterarStatus(Integer id) throws Exception {
         DepartamentoEntity entity = repository.findById(id)
-                .orElseThrow(() -> new Exception("Departamento não encontrado."));
-        // Soft delete — desativa ao invés de remover do banco
-        entity.setStatus(0);
+                .orElseThrow(() -> new Exception("Departameno não encontrado."));
+        
+        // Se for 1, vira 0. Se for 0 (ou qualquer outra coisa), vira 1.
+        int novoStatus = (entity.getStatus() == 1) ? 0 : 1;
+        
+        entity.setStatus(novoStatus);
         repository.save(entity);
     }
 

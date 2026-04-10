@@ -15,5 +15,5 @@ public class UsuarioDTO {
     private Integer tipoPerfil;
     private Integer departamentoId;
     private String departamentoNome;
-    private Boolean status;
+    private Integer status;
 }

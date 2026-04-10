@@ -64,11 +64,14 @@ public class MaterialService {
         return convertToDTO(materialRepository.save(entity));
     }
 
-    public void excluir(Integer id) throws Exception {
+    public void alterarStatus(Integer id) throws Exception {
         MaterialEntity entity = materialRepository.findById(id)
                 .orElseThrow(() -> new Exception("Material não encontrado: " + id));
-        // Soft delete
-        entity.setStatus(0);
+        
+        // Se for 1, vira 0. Se for 0 (ou qualquer outra coisa), vira 1.
+        int novoStatus = (entity.getStatus() == 1) ? 0 : 1;
+        
+        entity.setStatus(novoStatus);
         materialRepository.save(entity);
     }
 

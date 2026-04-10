@@ -1,5 +1,6 @@
 package com.example.Sistema_Requisicao.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,11 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EstoqueCriticoDTO {
     
-    private Integer materialId;   // Útil se o usuário quiser clicar no nome e abrir o cadastro
-    private String materialNome; // O que realmente importa na lista
-    private String categoriaNome; // Para agrupar (ex: Limpeza, Escritório)
+    private Integer idAlerta;      // ID da tabela EstoqueCritico
+    private Integer materialId;    // ID do Material
+    private String materialNome;
+    private String categoriaNome;
     private Integer estoqueAtual;
     private Integer estoqueMin;
-    private Integer falta;        // Cálculo: (estoqueMinimo - estoqueAtual)
-    
+    private Integer falta;         // Cálculo: (Minimo - Atual)
+    private LocalDateTime dataGeracao; // Quando o alerta foi criado pela Trigger
+    private String statusAlerta;   // PENDENTE, PEDIDO ou RESOLVIDO
 }

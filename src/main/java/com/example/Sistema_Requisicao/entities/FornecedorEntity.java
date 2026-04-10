@@ -18,4 +18,7 @@ public class FornecedorEntity {
 
     @Column(nullable = false, length = 50)
     private String nome;
+
+    @Column(nullable = false)
+    private Integer status = 1;
 }

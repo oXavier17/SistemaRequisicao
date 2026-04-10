@@ -16,7 +16,7 @@ public class FornecedorService {
     public List<FornecedorDTO> listarTodos() {
         return repository.findAll()
                 .stream()
-                .map(f -> new FornecedorDTO(f.getIdFornecedor(), f.getNome()))
+                .map(f -> new FornecedorDTO(f.getIdFornecedor(), f.getNome(), f.getStatus()))
                 .toList();
     }
 
@@ -27,7 +27,7 @@ public class FornecedorService {
         FornecedorEntity entity = new FornecedorEntity();
         entity.setNome(dto.getNome());
         FornecedorEntity salvo = repository.save(entity);
-        return new FornecedorDTO(salvo.getIdFornecedor(), salvo.getNome());
+        return new FornecedorDTO(salvo.getIdFornecedor(), salvo.getNome(), salvo.getStatus());
     }
 
     public FornecedorDTO editar(Integer id, FornecedorDTO dto) throws Exception {
@@ -35,13 +35,17 @@ public class FornecedorService {
                 .orElseThrow(() -> new Exception("Fornecedor não encontrado."));
         entity.setNome(dto.getNome());
         FornecedorEntity salvo = repository.save(entity);
-        return new FornecedorDTO(salvo.getIdFornecedor(), salvo.getNome());
+        return new FornecedorDTO(salvo.getIdFornecedor(), salvo.getNome(), salvo.getStatus());
     }
 
-    public void excluir(Integer id) throws Exception {
-        if (!repository.existsById(id)) {
-            throw new Exception("Fornecedor não encontrado.");
-        }
-        repository.deleteById(id);
+    public void alterarStatus(Integer id) throws Exception {
+        FornecedorEntity entity = repository.findById(id)
+                .orElseThrow(() -> new Exception("Fornecedor não encontrado."));
+        
+        // Se for 1, vira 0. Se for 0 (ou qualquer outra coisa), vira 1.
+        int novoStatus = (entity.getStatus() == 1) ? 0 : 1;
+        
+        entity.setStatus(novoStatus);
+        repository.save(entity);
     }
 }

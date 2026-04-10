@@ -1,5 +1,7 @@
 package com.example.Sistema_Requisicao.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,11 +14,12 @@ public class ItemRequisicaoEntity {
     private Integer idItem;
 
     @ManyToOne
-    @JoinColumn(name = "idRequisicao")
+    @JoinColumn(name = "requisicaoId")
+    @JsonBackReference
     private RequisicaoEntity requisicao; // SEM @GeneratedValue aqui!
 
     @ManyToOne
-    @JoinColumn(name = "idMaterial")
+    @JoinColumn(name = "materialId")
     private MaterialEntity material; // SEM @GeneratedValue aqui!
 
     private Integer quantidade;

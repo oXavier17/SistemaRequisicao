@@ -103,7 +103,7 @@ public class RequisicaoService {
         }
 
         ItemRequisicaoEntity item = itemRepository
-                .findByRequisicaoIdAndMaterialId(requisicaoId, materialId)
+                .findByRequisicaoIdRequisicaoAndMaterialIdMaterial(requisicaoId, materialId)
                 .orElseThrow(() -> new Exception("Item não encontrado na requisição."));
 
         item.setQuantidade(novaQuantidade);

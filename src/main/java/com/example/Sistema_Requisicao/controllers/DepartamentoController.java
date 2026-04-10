@@ -4,8 +4,12 @@ import com.example.Sistema_Requisicao.services.*;
 import com.example.Sistema_Requisicao.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,23 +19,41 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/departamentos")
-@CrossOrigin(origins = "*")
+@RequestMapping("/departamentos")
+@CrossOrigin(origins = "*") // Permite que o React acesse a API
 public class DepartamentoController {
 
     @Autowired
     private DepartamentoService service;
 
     @GetMapping
-    public ResponseEntity<List<DepartamentoDTO>> listar() {
+    public ResponseEntity<List<DepartamentoDTO>> listarTodos() {
         return ResponseEntity.ok(service.listarTodos());
     }
 
     @PostMapping
-    public ResponseEntity<?> salvar(@RequestBody DepartamentoDTO dto) {
+    public ResponseEntity<?> criar(@RequestBody DepartamentoDTO dto) {
         try {
-            service.salvar(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(dto));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editar(@PathVariable Integer id, @RequestBody DepartamentoDTO dto) {
+        try {
+            return ResponseEntity.ok(service.editar(id, dto));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> alterarStatus(@PathVariable Integer id) {
+        try {
+            service.alterarStatus(id);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

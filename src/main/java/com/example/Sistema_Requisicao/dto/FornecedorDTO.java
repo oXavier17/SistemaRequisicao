@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class FornecedorDTO {
     private Integer idFornecedor;
     private String nome;
+    private Integer status;
 }

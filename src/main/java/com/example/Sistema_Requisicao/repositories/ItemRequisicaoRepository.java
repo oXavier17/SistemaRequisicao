@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface ItemRequisicaoRepository extends JpaRepository<ItemRequisicaoEntity, Integer> {
     // Caso você precise listar todos os itens de uma requisição específica no futuro
-    List<ItemRequisicaoEntity> findByRequisicaoId(Integer requisicaoId);
+    List<ItemRequisicaoEntity> findByRequisicaoIdRequisicao(Integer requisicaoId);
     // O Spring navega: item -> requisicao -> idRequisicao E item -> material -> idMaterial
-    Optional<ItemRequisicaoEntity> findByRequisicaoIdAndMaterialId(Integer idRequisicao, Integer idMaterial);
+    Optional<ItemRequisicaoEntity> findByRequisicaoIdRequisicaoAndMaterialIdMaterial(Integer idRequisicao, Integer idMaterial);
 }

@@ -15,11 +15,15 @@ public class EstoqueCriticoEntity {
     @Column(name = "idAlerta") 
     private Integer idAlerta;
     
-    @Column(name = "materialId")
-    private Integer materialId;
+    @ManyToOne
+    @JoinColumn(name = "materialId", nullable = false)
+    private MaterialEntity material;
 
     private LocalDateTime dataGeracao = LocalDateTime.now();
 
+    @Column(name = "dataResolucao", nullable = true)
+    private LocalDateTime dataResolucao;
+
     @Column(name = "statusAlerta") // Nome exato da coluna no SQL
-    private String status = "PENDENTE";
+    private String statusAlerta = "PENDENTE";
 }

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EstoqueCriticoRepository extends JpaRepository<EstoqueCriticoEntity, Integer> {
-    
-    // Busca apenas os alertas que ainda não foram resolvidos
-    List<EstoqueCriticoEntity> findByStatus(String status);
+    // O nome do método deve ser exatamente igual ao atributo na Entity
+    List<EstoqueCriticoEntity> findByStatusAlerta(String statusAlerta);
 }

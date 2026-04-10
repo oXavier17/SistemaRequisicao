@@ -11,23 +11,26 @@ import com.example.Sistema_Requisicao.dto.*;
 public class EstoqueCriticoService {
 
     @Autowired
-    private MaterialRepository materialRepository;
+    private EstoqueCriticoRepository repository;
 
-    public List<EstoqueCriticoDTO> listarCriticos() {
-        return materialRepository.buscarMateriaisEmEstoqueCritico()
-                .stream()
-                .map(m -> {
-                    EstoqueCriticoDTO dto = new EstoqueCriticoDTO();
-                    dto.setMaterialId(m.getIdMaterial());
-                    dto.setMaterialNome(m.getNome());
-                    dto.setCategoriaNome(
-                        m.getCategoria() != null ? m.getCategoria().getNome() : null
-                    );
-                    dto.setEstoqueAtual(m.getEstoqueAtual());
-                    dto.setEstoqueMin(m.getEstoqueMin());
-                    dto.setFalta(m.getEstoqueMin() - m.getEstoqueAtual());
-                    return dto;
-                })
-                .collect(Collectors.toList());
+    public List<EstoqueCriticoDTO> listarPendentes() {
+        return repository.findByStatusAlerta("PENDENTE").stream()
+            .map(entity -> {
+                EstoqueCriticoDTO dto = new EstoqueCriticoDTO();
+                dto.setIdAlerta(entity.getIdAlerta());
+                dto.setMaterialId(entity.getMaterial().getIdMaterial());
+                dto.setMaterialNome(entity.getMaterial().getNome());
+                dto.setCategoriaNome(entity.getMaterial().getCategoria().getNome());
+                dto.setEstoqueAtual(entity.getMaterial().getEstoqueAtual());
+                dto.setEstoqueMin(entity.getMaterial().getEstoqueMin());
+                dto.setDataGeracao(entity.getDataGeracao());
+                dto.setStatusAlerta(entity.getStatusAlerta());
+                
+                // Cálculo da falta:
+                dto.setFalta(entity.getMaterial().getEstoqueMin() - entity.getMaterial().getEstoqueAtual());
+                
+                return dto;
+            })
+            .collect(Collectors.toList());
     }
 }

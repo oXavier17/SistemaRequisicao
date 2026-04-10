@@ -43,11 +43,4 @@ public class CategoriaService {
         CategoriaEntity salvo = repository.save(entity);
         return new CategoriaDTO(salvo.getIdCategoria(), salvo.getNome());
     }
-
-    public void excluir(Integer id) throws Exception {
-        if (!repository.existsById(id)) {
-            throw new Exception("Categoria não encontrada.");
-        }
-        repository.deleteById(id);
-    }
 }

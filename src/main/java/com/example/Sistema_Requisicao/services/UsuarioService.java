@@ -1,6 +1,5 @@
 package com.example.Sistema_Requisicao.services;
 
-import com.example.Sistema_Requisicao.repositories.DepartamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -38,7 +37,7 @@ public class UsuarioService {
         entity.setCpf(dto.getCpf());
         entity.setSenha(dto.getSenha()); // futuramente: BCryptPasswordEncoder
         entity.setTipoPerfil(dto.getTipoPerfil());
-        entity.setStatus(true);
+        entity.setStatus(1);
 
         if (dto.getDepartamentoId() != null) {
             DepartamentoEntity depto = departamentoRepository.findById(dto.getDepartamentoId())
@@ -79,11 +78,14 @@ public class UsuarioService {
         return convertToDTO(usuarioRepository.save(entity));
     }
 
-    public void excluir(Integer id) throws Exception {
+    public void alterarStatus(Integer id) throws Exception {
         UsuarioEntity entity = usuarioRepository.findById(id)
-                .orElseThrow(() -> new Exception("Usuário não encontrado."));
-        // Soft delete
-        entity.setStatus(false);
+                .orElseThrow(() -> new Exception("Usuario não encontrado."));
+        
+        // Se for 1, vira 0. Se for 0 (ou qualquer outra coisa), vira 1.
+        int novoStatus = (entity.getStatus() == 1) ? 0 : 1;
+        
+        entity.setStatus(novoStatus);
         usuarioRepository.save(entity);
     }
 
