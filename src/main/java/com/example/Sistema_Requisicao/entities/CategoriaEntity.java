@@ -15,4 +15,6 @@ public class CategoriaEntity {
     
     @Column(name = "nome") // Mapeia a coluna 'nome' do banco
     private String nome;
+
+    private Integer status = 1;
 }

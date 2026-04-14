@@ -18,7 +18,15 @@ public class MaterialService {
     private CategoriaRepository categoriaRepository;
 
     public List<MaterialDTO> listarTodos() {
-        return materialRepository.findAll().stream()
+        return materialRepository.findByStatus(1)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<MaterialDTO> listarTodosComInativos() {
+        return materialRepository.findAll()
+                .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -32,18 +40,25 @@ public class MaterialService {
 
     public MaterialDTO salvar(MaterialDTO dto) throws Exception {
         MaterialEntity entity = new MaterialEntity();
-
         entity.setNome(dto.getNome());
         entity.setEstoqueMin(dto.getEstoqueMin());
-        entity.setEstoqueAtual(0); // sempre começa zerado
+        entity.setEstoqueAtual(0);
         entity.setStatus(1);
-        entity.setUnidade(dto.getUnidade()); // ← enum: "UN", "CX", etc.
+        entity.setUnidade(dto.getUnidade());
 
         CategoriaEntity categoria = categoriaRepository.findById(dto.getCategoriaId())
                 .orElseThrow(() -> new Exception("Categoria não encontrada."));
         entity.setCategoria(categoria);
 
-        return convertToDTO(materialRepository.save(entity));
+        MaterialEntity salvo = materialRepository.save(entity);
+        
+        // ← O problema pode ser aqui — após o save, o objeto salvo
+        // pode não ter o relacionamento carregado
+        // Force o recarregamento pelo ID:
+        MaterialEntity recarregado = materialRepository.findById(salvo.getIdMaterial())
+                .orElseThrow(() -> new Exception("Erro ao recarregar material."));
+        
+        return convertToDTO(recarregado);
     }
 
     public MaterialDTO editar(Integer id, MaterialDTO dto) throws Exception {
@@ -67,27 +82,28 @@ public class MaterialService {
     public void alterarStatus(Integer id) throws Exception {
         MaterialEntity entity = materialRepository.findById(id)
                 .orElseThrow(() -> new Exception("Material não encontrado: " + id));
-        
-        // Se for 1, vira 0. Se for 0 (ou qualquer outra coisa), vira 1.
-        int novoStatus = (entity.getStatus() == 1) ? 0 : 1;
-        
-        entity.setStatus(novoStatus);
+        entity.setStatus(entity.getStatus() == 1 ? 0 : 1);
         materialRepository.save(entity);
     }
 
     private MaterialDTO convertToDTO(MaterialEntity entity) {
         MaterialDTO dto = new MaterialDTO();
-        dto.setIdMaterial(entity.getIdMaterial());   // ← era getId()
+        dto.setIdMaterial(entity.getIdMaterial());
         dto.setNome(entity.getNome());
         dto.setEstoqueAtual(entity.getEstoqueAtual());
         dto.setEstoqueMin(entity.getEstoqueMin());
         dto.setStatus(entity.getStatus());
         dto.setUnidade(entity.getUnidade());
 
+        // Verificação segura do relacionamento
         if (entity.getCategoria() != null) {
             dto.setCategoriaId(entity.getCategoria().getIdCategoria());
             dto.setCategoriaNome(entity.getCategoria().getNome());
+        } else {
+            dto.setCategoriaId(null);
+            dto.setCategoriaNome(""); // ← string vazia ao invés de null
         }
+        
         return dto;
     }
 }

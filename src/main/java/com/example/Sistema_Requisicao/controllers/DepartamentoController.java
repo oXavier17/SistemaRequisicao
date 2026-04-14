@@ -3,7 +3,6 @@ package com.example.Sistema_Requisicao.controllers;
 import com.example.Sistema_Requisicao.services.*;
 import com.example.Sistema_Requisicao.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +19,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/departamentos")
-@CrossOrigin(origins = "*") // Permite que o React acesse a API
 public class DepartamentoController {
 
     @Autowired
     private DepartamentoService service;
 
     @GetMapping
-    public ResponseEntity<List<DepartamentoDTO>> listarTodos() {
+    public ResponseEntity<List<DepartamentoDTO>> listarTodos(
+            @RequestParam(defaultValue = "false") boolean todos) {
+        if (todos) {
+            return ResponseEntity.ok(service.listarTodosComInativos());
+        }
         return ResponseEntity.ok(service.listarTodos());
     }
 

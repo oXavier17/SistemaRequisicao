@@ -11,14 +11,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/materiais")
-@CrossOrigin(origins = "*") // Permite que o React acesse a API
 public class MaterialController {
 
     @Autowired
     private MaterialService service;
 
     @GetMapping
-    public ResponseEntity<List<MaterialDTO>> listarTodos() {
+    public ResponseEntity<List<MaterialDTO>> listarTodos(
+            @RequestParam(defaultValue = "false") boolean todos) {
+        if (todos) {
+            return ResponseEntity.ok(service.listarTodosComInativos());
+        }
         return ResponseEntity.ok(service.listarTodos());
     }
 

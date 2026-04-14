@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/categorias")
-@CrossOrigin(origins = "*") // Permite que o React acesse a API
 public class CategoriaController {
 
     @Autowired
@@ -41,6 +40,16 @@ public class CategoriaController {
         try {
             CategoriaDTO atualizada = service.editar(id, dto);
             return ResponseEntity.ok(atualizada);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> alterarStatus(@PathVariable Integer id) {
+        try {
+            service.alterarStatus(id);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

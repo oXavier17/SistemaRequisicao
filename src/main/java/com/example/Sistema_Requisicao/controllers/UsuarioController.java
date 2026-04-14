@@ -11,14 +11,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
-@CrossOrigin(origins = "*") // Permite que o React acesse a API
 public class UsuarioController {
 
     @Autowired
     private UsuarioService service;
 
     @GetMapping
-    public ResponseEntity<List<UsuarioDTO>> listarTodos() {
+    public ResponseEntity<List<UsuarioDTO>> listarTodos(
+            @RequestParam(defaultValue = "false") boolean todos) {
+        if (todos) {
+            return ResponseEntity.ok(service.listarTodosComInativos()); // ← corrigido
+        }
         return ResponseEntity.ok(service.listarTodos());
     }
 

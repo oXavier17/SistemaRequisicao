@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/movimentos")
-@CrossOrigin(origins = "*") // Permite que o React acesse a API
 public class MovimentoController {
 
     @Autowired

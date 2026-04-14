@@ -19,4 +19,5 @@ public class EstoqueCriticoDTO {
     private Integer falta;         // Cálculo: (Minimo - Atual)
     private LocalDateTime dataGeracao; // Quando o alerta foi criado pela Trigger
     private String statusAlerta;   // PENDENTE, PEDIDO ou RESOLVIDO
+    private String nomeUnidade;
 }

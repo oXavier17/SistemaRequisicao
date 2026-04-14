@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/requisicoes")
-@CrossOrigin(origins = "*") // Permite que o React acesse a API
 public class RequisicaoController {
 
     @Autowired

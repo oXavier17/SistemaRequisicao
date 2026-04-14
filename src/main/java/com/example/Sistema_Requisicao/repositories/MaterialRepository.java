@@ -9,6 +9,12 @@ import java.util.List;
 @Repository
 public interface MaterialRepository extends JpaRepository<MaterialEntity, Integer> {
     // O Spring já cria o salvar, listar, deletar e buscar por ID sozinho aqui.
-    @Query("SELECT m FROM MaterialEntity m WHERE m.estoqueAtual <= m.estoqueMin")
+    // Adicione para listar só ativos:
+    List<MaterialEntity> findByStatus(Integer status);
+    // A query de críticos já está boa, só adicione o filtro de status:
+    @Query("SELECT m FROM MaterialEntity m WHERE m.estoqueAtual <= m.estoqueMin AND m.status = 1")
     List<MaterialEntity> buscarMateriaisEmEstoqueCritico();
+
+    @Query("SELECT COALESCE(SUM(m.estoqueAtual), 0) FROM MaterialEntity m WHERE m.status = 1")
+    Long sumEstoqueAtualAtivos();
 }

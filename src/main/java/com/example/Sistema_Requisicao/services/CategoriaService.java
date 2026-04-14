@@ -16,7 +16,7 @@ public class CategoriaService {
     public List<CategoriaDTO> listarTodos() {
         return repository.findAll()
                 .stream()
-                .map(cat -> new CategoriaDTO(cat.getIdCategoria(), cat.getNome()))
+                .map(cat -> new CategoriaDTO(cat.getIdCategoria(), cat.getNome(), cat.getStatus()))
                 .toList();
     }
 
@@ -27,20 +27,24 @@ public class CategoriaService {
         CategoriaEntity entity = new CategoriaEntity();
         entity.setNome(dto.getNome());
         CategoriaEntity salvo = repository.save(entity);
-        return new CategoriaDTO(salvo.getIdCategoria(), salvo.getNome()); // ← retorna o criado
+        return new CategoriaDTO(salvo.getIdCategoria(), salvo.getNome(), salvo.getStatus());
     }
 
     public CategoriaDTO editar(Integer id, CategoriaDTO dto) throws Exception {
         CategoriaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new Exception("Categoria não encontrada."));
-
-        // Verifica duplicata ignorando o próprio registro
         if (repository.existsByNomeAndIdCategoriaNot(dto.getNome(), id)) {
             throw new Exception("Já existe uma categoria com este nome.");
         }
-
         entity.setNome(dto.getNome());
         CategoriaEntity salvo = repository.save(entity);
-        return new CategoriaDTO(salvo.getIdCategoria(), salvo.getNome());
+        return new CategoriaDTO(salvo.getIdCategoria(), salvo.getNome(), salvo.getStatus());
+    }
+
+    public void alterarStatus(Integer id) throws Exception {
+        CategoriaEntity entity = repository.findById(id)
+                .orElseThrow(() -> new Exception("Categoria não encontrada."));
+        entity.setStatus(entity.getStatus() == 1 ? 0 : 1);
+        repository.save(entity);
     }
 }

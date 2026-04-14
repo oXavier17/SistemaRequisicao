@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoriaDTO {
-    private Integer idCategoria;
-    private String nome;
-    private Integer status;
+public class LoginDTO {
+    private String email;
+    private String senha;
 }

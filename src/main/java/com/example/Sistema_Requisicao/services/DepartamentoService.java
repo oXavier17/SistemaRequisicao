@@ -14,6 +14,13 @@ public class DepartamentoService {
     private DepartamentoRepository repository;
 
     public List<DepartamentoDTO> listarTodos() {
+        return repository.findByStatus(1)
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+
+    public List<DepartamentoDTO> listarTodosComInativos() {
         return repository.findAll()
                 .stream()
                 .map(this::convertToDTO)
@@ -21,14 +28,13 @@ public class DepartamentoService {
     }
 
     public DepartamentoDTO salvar(DepartamentoDTO dto) throws Exception {
-        if (repository.existsByNome(dto.getNome())) {
+        if (repository.existsByNomeAndStatus(dto.getNome(), 1)) { // ← só verifica ativos
             throw new Exception("Já existe um departamento com este nome.");
         }
         DepartamentoEntity entity = new DepartamentoEntity();
         entity.setNome(dto.getNome());
         entity.setStatus(1);
-        DepartamentoEntity salvo = repository.save(entity);
-        return convertToDTO(salvo);
+        return convertToDTO(repository.save(entity));
     }
 
     public DepartamentoDTO editar(Integer id, DepartamentoDTO dto) throws Exception {
@@ -40,12 +46,8 @@ public class DepartamentoService {
 
     public void alterarStatus(Integer id) throws Exception {
         DepartamentoEntity entity = repository.findById(id)
-                .orElseThrow(() -> new Exception("Departameno não encontrado."));
-        
-        // Se for 1, vira 0. Se for 0 (ou qualquer outra coisa), vira 1.
-        int novoStatus = (entity.getStatus() == 1) ? 0 : 1;
-        
-        entity.setStatus(novoStatus);
+                .orElseThrow(() -> new Exception("Departamento não encontrado."));
+        entity.setStatus(entity.getStatus() == 1 ? 0 : 1);
         repository.save(entity);
     }
 

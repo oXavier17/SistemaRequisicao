@@ -3,7 +3,6 @@ package com.example.Sistema_Requisicao.controllers;
 import com.example.Sistema_Requisicao.services.*;
 import com.example.Sistema_Requisicao.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +17,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/fornecedores")
-@CrossOrigin(origins = "*") // Permite que o React acesse a API
 public class FornecedorController {
 
     @Autowired

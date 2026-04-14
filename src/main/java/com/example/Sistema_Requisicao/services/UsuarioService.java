@@ -1,11 +1,15 @@
 package com.example.Sistema_Requisicao.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.example.Sistema_Requisicao.entities.*;
 import com.example.Sistema_Requisicao.repositories.*;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.example.Sistema_Requisicao.dto.*;
 
 @Service
@@ -17,8 +21,27 @@ public class UsuarioService {
     @Autowired
     private DepartamentoRepository departamentoRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
+    private JwtService jwtService;
+
+    // Só ativos
     public List<UsuarioDTO> listarTodos() {
-        return usuarioRepository.findAll().stream()
+        return usuarioRepository.findByStatus(1)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Todos incluindo inativos
+    public List<UsuarioDTO> listarTodosComInativos() {
+        return usuarioRepository.findAll()
+                .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -35,7 +58,7 @@ public class UsuarioService {
         entity.setNome(dto.getNome());
         entity.setEmail(dto.getEmail());
         entity.setCpf(dto.getCpf());
-        entity.setSenha(dto.getSenha()); // futuramente: BCryptPasswordEncoder
+        entity.setSenha(passwordEncoder.encode(dto.getSenha()));
         entity.setTipoPerfil(dto.getTipoPerfil());
         entity.setStatus(1);
 
@@ -49,22 +72,38 @@ public class UsuarioService {
     }
 
     public UsuarioDTO editar(Integer id, UsuarioCadastroDTO dto) throws Exception {
+
         UsuarioEntity entity = usuarioRepository.findById(id)
                 .orElseThrow(() -> new Exception("Usuário não encontrado."));
 
-        // Verifica email duplicado ignorando o próprio usuário
+        // 🔐 Pega usuário logado
+        String token = request.getHeader("Authorization");
+        Integer idLogado = null;
+
+        if (token != null && token.startsWith("Bearer ")) {
+            idLogado = jwtService.extrairIdUsuario(token.substring(7));
+        }
+
+        // 🔒 Regra do admin master
+        if (id == 1 && (idLogado == null || !idLogado.equals(1))) {
+            throw new Exception("Apenas o administrador principal pode editar este usuário.");
+        }
+
+        // 🔒 Email duplicado
         usuarioRepository.findByEmail(dto.getEmail())
                 .filter(u -> !u.getIdUsuario().equals(id))
-                .ifPresent(u -> { throw new RuntimeException("E-mail já cadastrado."); });
+                .ifPresent(u -> {
+                    throw new RuntimeException("E-mail já cadastrado.");
+                });
 
+        // ✅ Agora sim altera
         entity.setNome(dto.getNome());
         entity.setEmail(dto.getEmail());
         entity.setCpf(dto.getCpf());
         entity.setTipoPerfil(dto.getTipoPerfil());
 
-        // Só atualiza senha se foi enviada
         if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
-            entity.setSenha(dto.getSenha());
+            entity.setSenha(passwordEncoder.encode(dto.getSenha()));
         }
 
         if (dto.getDepartamentoId() != null) {
@@ -72,20 +111,35 @@ public class UsuarioService {
                     .orElseThrow(() -> new Exception("Departamento não encontrado."));
             entity.setDepartamento(depto);
         } else {
-            entity.setDepartamento(null); // Administrador não tem departamento
+            entity.setDepartamento(null);
         }
 
         return convertToDTO(usuarioRepository.save(entity));
     }
 
     public void alterarStatus(Integer id) throws Exception {
+        String token = request.getHeader("Authorization");
+        Integer idLogado = null;
+
+        if (token != null && token.startsWith("Bearer ")) {
+            idLogado = jwtService.extrairIdUsuario(token.substring(7));
+        }
+
+        // 🔒 Não pode desativar a si mesmo
+        if (idLogado != null && idLogado.equals(id)) {
+            throw new Exception("Você não pode inativar sua própria conta.");
+        }
+
+        // 🔒 Admin master nunca pode ser inativado
+        if (id == 1) {
+            throw new Exception("O usuário administrador principal não pode ser inativado.");
+        }
+
         UsuarioEntity entity = usuarioRepository.findById(id)
-                .orElseThrow(() -> new Exception("Usuario não encontrado."));
-        
-        // Se for 1, vira 0. Se for 0 (ou qualquer outra coisa), vira 1.
-        int novoStatus = (entity.getStatus() == 1) ? 0 : 1;
-        
-        entity.setStatus(novoStatus);
+                .orElseThrow(() -> new Exception("Usuário não encontrado."));
+
+        entity.setStatus(entity.getStatus() == 1 ? 0 : 1);
+
         usuarioRepository.save(entity);
     }
 

@@ -1,5 +1,7 @@
 package com.example.Sistema_Requisicao.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,7 +39,8 @@ public class UsuarioEntity {
     // Relacionamento com Departamento
     // Como ADMs podem não ter departamento, deixamos nullable = true
     @ManyToOne
-    @JoinColumn(name = "idDepartamento", nullable = true) 
+    @JoinColumn(name = "departamentoId", nullable = true)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private DepartamentoEntity departamento;
 
     // Dica: Método auxiliar para o Front-end saber o nome do perfil

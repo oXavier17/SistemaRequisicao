@@ -16,12 +16,12 @@ public class FornecedorService {
     public List<FornecedorDTO> listarTodos() {
         return repository.findAll()
                 .stream()
-                .map(f -> new FornecedorDTO(f.getIdFornecedor(), f.getNome(), f.getStatus()))
+                .map(cat -> new FornecedorDTO(cat.getIdFornecedor(), cat.getNome(), cat.getStatus()))
                 .toList();
     }
 
     public FornecedorDTO salvar(FornecedorDTO dto) throws Exception {
-        if (repository.existsByNome(dto.getNome())) {
+        if (repository.existsByNomeAndStatus(dto.getNome(), 1)) { // ← só verifica ativos
             throw new Exception("Já existe um fornecedor com este nome.");
         }
         FornecedorEntity entity = new FornecedorEntity();
@@ -41,11 +41,7 @@ public class FornecedorService {
     public void alterarStatus(Integer id) throws Exception {
         FornecedorEntity entity = repository.findById(id)
                 .orElseThrow(() -> new Exception("Fornecedor não encontrado."));
-        
-        // Se for 1, vira 0. Se for 0 (ou qualquer outra coisa), vira 1.
-        int novoStatus = (entity.getStatus() == 1) ? 0 : 1;
-        
-        entity.setStatus(novoStatus);
+        entity.setStatus(entity.getStatus() == 1 ? 0 : 1);
         repository.save(entity);
     }
 }
