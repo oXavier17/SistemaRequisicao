@@ -24,7 +24,7 @@ public class MovimentoService {
     private FornecedorRepository fornecedorRepository;
 
     public List<MovimentoDTO> listarTodos() {
-        return repository.findAll().stream()
+        return repository.findAllByOrderByDataMovimentoDesc().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

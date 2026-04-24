@@ -43,6 +43,6 @@ public class MovimentoEntity {
     @JoinColumn(name = "fornecedorId", nullable = true)
     private FornecedorEntity fornecedor;
 
-    @Column(length = 200)
+    @Column(length = 150)
     private String observacao;
 }

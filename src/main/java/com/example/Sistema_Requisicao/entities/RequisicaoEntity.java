@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -27,7 +28,7 @@ public class RequisicaoEntity {
     @Column(nullable = false)
     private Integer status; // 1-Aberta, 2-Separação, 3-Pronta, 4-Entregue, 5-Cancelada
 
-    @Column(length = 300)
+    @Column(length = 200)
     private String observacao;
 
     // QUEM PEDIU (Sempre um Usuario com tipo_perfil = 3)
@@ -46,7 +47,7 @@ public class RequisicaoEntity {
     private DepartamentoEntity departamento;
 
     // RELACIONAMENTO COM OS ITENS (Opcional, mas ajuda muito no GET do Front-end)
-    @OneToMany(mappedBy = "requisicao", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "requisicao", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<ItemRequisicaoEntity> itens;
+    private List<ItemRequisicaoEntity> itens = new ArrayList<>();
 }

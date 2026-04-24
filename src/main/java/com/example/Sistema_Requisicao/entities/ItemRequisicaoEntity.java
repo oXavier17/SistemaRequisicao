@@ -13,10 +13,10 @@ public class ItemRequisicaoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idItem;
 
-    @ManyToOne
-    @JoinColumn(name = "requisicaoId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requisicaoId", nullable = false)
     @JsonBackReference
-    private RequisicaoEntity requisicao; // SEM @GeneratedValue aqui!
+    private RequisicaoEntity requisicao;
 
     @ManyToOne
     @JoinColumn(name = "materialId")
